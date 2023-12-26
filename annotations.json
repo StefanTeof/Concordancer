@@ -1,0 +1,24 @@
+{"Noun": {
+    "Type": {
+        "c": "common"
+    },
+    "Gender": {
+        "m": "masculine",
+        "f": "femine",
+        "n": "neuter"
+    },
+    "Number": {
+        "s": "singular",
+        "p": "plural"
+    },
+    "Case": {
+        "n": "nominative"
+    },
+    "Definite": {
+        "n": "no",
+        "y": "yes"
+    }
+},
+"Verb": {
+
+}}
