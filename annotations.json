@@ -1,6 +1,7 @@
 {"Noun": {
     "Type": {
-        "c": "common"
+        "c": "common",
+        "p": "proper"
     },
     "Gender": {
         "m": "masculine",
@@ -12,13 +13,29 @@
         "p": "plural"
     },
     "Case": {
-        "n": "nominative"
+        "n": "nominative",
+        "v": "vocative",
+        "o": "oblique"
     },
     "Definite": {
         "n": "no",
         "y": "yes"
     }
 },
-"Verb": {
-
+"Verb": { 
+    "Type": {
+        "m": "main",
+        "a": "auxiliarry",
+        "o": "modal"
+    },
+    "Aspect": {
+        "p": "progressive",
+        "e": "perfective"
+    },
+    "Vform": {
+        "i": "indicative",
+        "m": "imperative",
+        "p": "participle"
+    }
+    
 }}
