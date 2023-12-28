@@ -1,38 +1,44 @@
-{"Noun": {
-    "Type": {
+{"N": {
+    "category": {
+        "N": "noun"
+    },
+    "type": {
         "c": "common",
         "p": "proper"
     },
-    "Gender": {
+    "gender": {
         "m": "masculine",
         "f": "femine",
         "n": "neuter"
     },
-    "Number": {
+    "number": {
         "s": "singular",
         "p": "plural"
     },
-    "Case": {
+    "case": {
         "n": "nominative",
         "v": "vocative",
         "o": "oblique"
     },
-    "Definite": {
+    "definite": {
         "n": "no",
         "y": "yes"
     }
 },
-"Verb": { 
-    "Type": {
+"V": { 
+    "category": {
+        "V": "verb"
+    },
+    "type": {
         "m": "main",
         "a": "auxiliarry",
         "o": "modal"
     },
-    "Aspect": {
+    "aspect": {
         "p": "progressive",
         "e": "perfective"
     },
-    "Vform": {
+    "vform": {
         "i": "indicative",
         "m": "imperative",
         "p": "participle"
