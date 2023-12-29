@@ -152,6 +152,73 @@
         "s": "superlative",
         "e": "elative"
     }
+},
+"S": {
+    "category": {
+        "s": "adposition"
+    },
+    "type": {
+        "p": "preposition"
+    },
+    "formation": {
+        "s": "simple",
+        "c": "compound"
+    }
+},
+"C": {
+    "category": {
+        "c": "conjuction"
+    },
+    "type": {
+        "c": "coordinating",
+        "s": "subordinating"
+    },
+    "formation": {
+        "s": "simple",
+        "c": "compound"
+    }
+},
+"M": {
+    "category": {
+        "m": "numeral"
+    },
+    "type": {
+        "c": "cardinal",
+        "o": "ordinal",
+        "l": "collect",
+        "s": "special"
+    },
+    "gender": {
+        "m": "masculine",
+        "f": "feminine",
+        "n": "neuter"
+    },
+    "form": {
+        "d": "digit",
+        "r": "roman",
+        "l": "letter"
+    },
+    "definite": {
+        "n": "no",
+        "y": "yes",
+        "p": "proximal",
+        "d": "distal"
+    }
+},
+"Q": {
+    "category": {
+        "q": "particle"
+    },
+    "formation": {
+        "s": "simple",
+        "c": "compound"
+    }
+},
+"X": {
+    "category": {
+        "x": "residual"
+    }
 }
+
 
 }
