@@ -1,28 +1,19 @@
 import json
+import xml.etree.ElementTree as ET
+
+tree = ET.parse('../oana-mk.ana15.02.xml')
+root = tree.getroot()
+
+namespace = {'tei': 'http://www.tei-c.org/ns/1.0'}
 
 with open('../annotations.json', 'r', encoding='utf-8') as json_file:
     annotations = json.load(json_file)
 
-def test():
-    annotation = 'Ncnsny'
-    features = {'category': 'Nan', 'type': 'Nan', 'gender': 'Nan', 'number': 'Nan', 'case': 'Nan', 'definite': 'Nan', 'person': 'Nan', 'tense': 'Nan', 'aspect': 'Nan', 'negation': 'Nan', 'degree': 'Nan', 'formation': 'Nan', 'vform': 'Nan', 'form': 'Nan'}
-
-
-    category = annotation[0]
-    if category in annotations:
-        category_data = annotations[category]
-        
-        i = 0
-        for feature in features.keys():
-            if(feature in category_data.keys()):
-                features[feature] = category_data[feature][annotation[i]]
-                i += 1
-                # print(feature)
-                # print(category_data[feature][annotation[i]])
-                # i += 1
-
-    print(features)
-
-
-
+def test(): 
+    print('test')
+    for s_tag in root.findall('.//tei:s', namespace):
+        # Process each <s> tag
+        for child in s_tag:
+            if(child.tag == '{http://www.tei-c.org/ns/1.0}w'):
+                print("  ", child.tag, ":", child.get('lemma            '))
 test()
