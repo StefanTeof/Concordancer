@@ -42,6 +42,116 @@
         "i": "indicative",
         "m": "imperative",
         "p": "participle"
+    },
+    "tense": {
+        "p": "present",
+        "i": "imperfect",
+        "a": "aorist"
+    },
+    "person": {
+        "1": "first",
+        "2": "second",
+        "3": "third"
+    },
+    "number": {
+        "s": "singular",
+        "p": "plural"
+    },
+    "voice": {
+        "a": "active",
+        "p": "passive"
+    },
+    "negative": {
+        "n": "no",
+        "y": "yes"
+    }    
+},
+"A": {
+    "category": {
+        "A": "adjective"
+    },
+    "type": {
+        "f": "qualificative",
+        "s": "possessive",
+        "o": "ordinal"
+    },
+    "degree": {
+        "p": "positive",
+        "c": "comparative",
+        "s": "superlative",
+        "e": "elative"
+    },
+    "gender": {
+        "m": "masculine",
+        "f": "feminine",
+        "n": "neuter"
+    },
+    "number": {
+        "s": "singular",
+        "p": "plural"
+    },
+    "definite": {
+        "n": "no",
+        "y": "yes",
+        "p": "proximal",
+        "d": "distal"
     }
-    
-}}
+},
+"P": {
+    "category": {
+        "p": "pronoun"
+    },
+    "type": {
+        "p": "personal",
+        "d": "demonstrative",
+        "i": "indefinite",
+        "s": "possessive",
+        "q": "interrogative",
+        "r": "relative",
+        "x": "reflexive",
+        "z": "negative",
+        "g": "general"
+    },
+    "person": {
+        "1": "first",
+        "2": "second",
+        "3": "third"
+    },
+    "gender": {
+        "m": "masculine",
+        "f": "feminine",
+        "n": "neuter"
+    },
+    "number": {
+        "s": "singular",
+        "p": "plural"
+    },
+    "case": {
+        "n": "nominative",
+        "d": "dative",
+        "a": "accusative"
+    },
+    "definite": {
+        "y": "yes",
+        "n": "no",
+        "p": "proximal",
+        "d": "distal"
+    }
+},
+"R": {
+    "category": {
+        "r": "adverb"
+    },
+    "type": {
+        "g": "general",
+        "a": "adjectival",
+        "v": "verbal"
+    },
+    "degree": {
+        "c": "comparative",
+        "s": "superlative",
+        "e": "elative"
+    }
+}
+
+}
