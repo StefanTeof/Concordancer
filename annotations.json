@@ -13,7 +13,8 @@
     },
     "number": {
         "s": "singular",
-        "p": "plural"
+        "p": "plural",
+        "t": "count"
     },
     "case": {
         "n": "nominative",
@@ -22,7 +23,9 @@
     },
     "definite": {
         "n": "no",
-        "y": "yes"
+        "y": "yes",
+        "p": "proximal",
+        "d": "distal"
     }
 },
 "V": { 
@@ -36,7 +39,8 @@
     },
     "aspect": {
         "p": "progressive",
-        "e": "perfective"
+        "e": "perfective",
+        "b": "biaspectual"
     },
     "vform": {
         "i": "indicative",
@@ -46,7 +50,8 @@
     "tense": {
         "p": "present",
         "i": "imperfect",
-        "a": "aorist"
+        "a": "aorist",
+        "c": "compound"
     },
     "person": {
         "1": "first",
@@ -57,9 +62,10 @@
         "s": "singular",
         "p": "plural"
     },
-    "voice": {
-        "a": "active",
-        "p": "passive"
+    "gender": {
+        "m": "masculine",
+        "f": "feminine",
+        "n": "neuter"
     },
     "negative": {
         "n": "no",
@@ -73,7 +79,9 @@
     "type": {
         "f": "qualificative",
         "s": "possessive",
-        "o": "ordinal"
+        "o": "ordinal",
+        "g": "general",
+        "p": "participle"
     },
     "degree": {
         "p": "positive",
@@ -99,7 +107,7 @@
 },
 "P": {
     "category": {
-        "p": "pronoun"
+        "P": "pronoun"
     },
     "type": {
         "p": "personal",
@@ -140,22 +148,24 @@
 },
 "R": {
     "category": {
-        "r": "adverb"
+        "R": "adverb"
     },
     "type": {
         "g": "general",
         "a": "adjectival",
-        "v": "verbal"
+        "v": "verbal",
+        "d": "modal"
     },
     "degree": {
         "c": "comparative",
         "s": "superlative",
-        "e": "elative"
+        "e": "elative",
+        "p": "positive"
     }
 },
 "S": {
     "category": {
-        "s": "adposition"
+        "S": "adposition"
     },
     "type": {
         "p": "preposition"
@@ -167,7 +177,7 @@
 },
 "C": {
     "category": {
-        "c": "conjuction"
+        "C": "conjuction"
     },
     "type": {
         "c": "coordinating",
@@ -180,23 +190,24 @@
 },
 "M": {
     "category": {
-        "m": "numeral"
-    },
-    "type": {
-        "c": "cardinal",
-        "o": "ordinal",
-        "l": "collect",
-        "s": "special"
-    },
-    "gender": {
-        "m": "masculine",
-        "f": "feminine",
-        "n": "neuter"
+        "M": "numeral"
     },
     "form": {
         "d": "digit",
         "r": "roman",
         "l": "letter"
+    },
+    "type": {
+        "c": "cardinal",
+        "o": "ordinal",
+        "l": "collect",
+        "s": "special",
+        "p": "pronominal"
+    },
+    "gender": {
+        "m": "masculine",
+        "f": "feminine",
+        "n": "neuter"
     },
     "definite": {
         "n": "no",
@@ -207,7 +218,7 @@
 },
 "Q": {
     "category": {
-        "q": "particle"
+        "Q": "particle"
     },
     "formation": {
         "s": "simple",
@@ -216,7 +227,7 @@
 },
 "X": {
     "category": {
-        "x": "residual"
+        "X": "residual"
     }
 }
 
