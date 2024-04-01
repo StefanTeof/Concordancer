@@ -22,6 +22,10 @@ class RequestBody(BaseModel):
     sentences: List[str]
     keyword: str
     pos_category: str
+    
+class SearchRequestBody(BaseModel):
+    sentences_db: List[dict]
+    keyword: str
 
 app = FastAPI()
 
@@ -118,15 +122,12 @@ async def process_file(file: UploadFile = File(...)):
 
 
 @app.post("/search/")
-async def search(sentences_db: list, keyword: str):
-    if not sentences_db:
-        raise HTTPException(status_code=400, detail="No sentences database provided")
-
-    keyword = keyword.lower()
+async def search(request_body: SearchRequestBody):
+    sentences_db = request_body.sentences_db
+    keyword = request_body.keyword.lower()
     matching_sentences = [item for item in sentences_db if keyword in item['sentence'].lower()]
     
     return JSONResponse(content={"matching_sentences": matching_sentences})
-
 
 @app.post("/spacy_pos/")
 async def spacy_pos(request: RequestBody):
