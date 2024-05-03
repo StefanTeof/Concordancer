@@ -21,9 +21,5 @@ from concordance.views import index, attachFile
 urlpatterns = [
     path('', index, name='index'),
     path('admin/', admin.site.urls),
-<<<<<<< HEAD
-    path('', index, name="index"),
-=======
->>>>>>> b0bf2d244c62df7138b4734471947c8a0a278f73
     path('attachFile/', attachFile, name="attachFile"),
 ]
