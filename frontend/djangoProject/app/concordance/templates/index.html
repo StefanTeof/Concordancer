@@ -13,76 +13,76 @@
 
 <body>
 
+<br>
+
+<!--Header-->
+<section>
+    <div class="container ">
+        <div class="row">
+            <ul class="nav nav-pills nav-fill gap-2 p-1 small bg-dark rounded-5 shadow-sm" id="pillNav2"
+                role="tablist"
+                style="--bs-nav-link-color: var(--bs-white); --bs-nav-pills-link-active-color: var(--bs-dark); --bs-nav-pills-link-active-bg: var(--bs-white);">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-5" id="contact-tab2" data-bs-toggle="tab" type="button" role="tab"
+                            aria-selected="false" disabled><span class="h4 text-white fw-bolder text-uppercase font-monospace">Concordance</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                <a href="{% url 'index' %}" class="nav-link active rounded-5">
+                    Word search
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a href="{% url 'attachFile' %}" class="nav-link  rounded-5">
+                    Attach file
+                </a>
+            </li>
+            </ul>
+        </div>
+    </div>
     <br>
+</section>
 
-    <!--Header-->
-    <section>
-        <div class="container ">
-            <div class="row">
-                <ul class="nav nav-pills nav-fill gap-2 p-1 small bg-dark rounded-5 shadow-sm" id="pillNav2"
-                    role="tablist"
-                    style="--bs-nav-link-color: var(--bs-white); --bs-nav-pills-link-active-color: var(--bs-dark); --bs-nav-pills-link-active-bg: var(--bs-white);">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-5" id="contact-tab2" data-bs-toggle="tab" type="button"
-                            role="tab" aria-selected="false" disabled><span
-                                class="h4 text-white fw-bolder text-uppercase font-monospace">Concordance</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a href="{% url 'index' %}" class="nav-link active rounded-5">
-                            Word search
-                        </a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a href="{% url 'attachFile' %}" class="nav-link  rounded-5">
-                            Attach file
-                        </a>
-                    </li>
-                </ul>
+
+<!--Main-->
+<section>
+    <div class="container shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+        <div class="container" id="wsearchTab">
+            <div class="row bg-body-tertiary">
+                <h5>Type word here:</h5>
             </div>
-        </div>
-        <br>
-    </section>
-
-
-    <!--Main-->
-    <section>
-        <div class="container shadow-lg p-3 mb-5 bg-body-tertiary rounded">
-            <div class="container" id="wsearchTab">
-                <div class="row bg-body-tertiary">
-                    <h5>Type word here:</h5>
-                </div>
-                <!-- Form should start from here -->
-                <form method="get" action="{% url 'index' %}">
-                    <!-- Ensure the action matches the Django URL name for the view -->
-                    <div class="row">
-                        <div class="col">
-                            <nav class="navbar bg-body-tertiary">
-                                <div class="container-fluid">
-                                    <input class="form-control border border-3" type="search" placeholder="Example..."
-                                        aria-label="Search" name="keyword">
-                                </div>
-                            </nav>
-                        </div>
-                        <div class="col">
-                            <ul class="list-group">
-                                {% for category in categories %}
-                                <li class="list-group-item">
-                                    <input class="form-check-input me-1" type="radio" name="category"
-                                        value="{{ category }}">
-                                    <label class="form-check-label">{{ category }}</label>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col">
-                            <button class="btn btn-outline-primary" type="submit">Search</button>
-                        </div>
+            <!-- Form should start from here -->
+            <form method="get" action="{% url 'index' %}">
+                <!-- Ensure the action matches the Django URL name for the view -->
+                <div class="row">
+                    <div class="col">
+                        <nav class="navbar bg-body-tertiary">
+                            <div class="container-fluid">
+                                <input class="form-control border border-3" type="search" placeholder="Example..."
+                                    aria-label="Search" name="keyword">
+                            </div>
+                        </nav>
                     </div>
-                </form>
-            </div>
+                    <div class="col">
+                        <ul class="list-group">
+                            {% for category in categories %}
+                            <li class="list-group-item">
+                                <input class="form-check-input me-1" type="radio" name="category"
+                                    value="{{ category }}">
+                                <label class="form-check-label">{{ category }}</label>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-outline-primary" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
         </div>
-    </section>
+    </div>
+</section>
+
 
     <!--Result section-->
 
