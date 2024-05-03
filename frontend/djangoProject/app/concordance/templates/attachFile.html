@@ -49,22 +49,23 @@
 
 <!--Main-->
 <section>
-    <div class="container shadow-lg p-3 mb-5 bg-body-tertiary rounded">
-        <div class="container">
-            <div class="input-group ">
-                <input type="file" class="form-control" id="inputGroupFile02">
-                <label class="input-group-text" for="inputGroupFile02">Upload</label>
+    <form method="post" action="{% url 'attachFile' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+            <div class="container">
+                <div class="input-group ">
+                    <input type="file" class="form-control" id="inputGroupFile02" name="file">  <!-- Added name="file" -->
+                    <button class="input-group-text" type="submit">Upload</button>
+                </div>
             </div>
         </div>
-    </div>
-
+    </form>
 </section>
-
 <!--Result section-->
 
 <section>
     <div class="container shadow-lg p-3 mb-5 bg-body-tertiary rounded">
-
+        <p>{{ message }}</p>
     </div>
 </section>
 

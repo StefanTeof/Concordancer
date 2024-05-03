@@ -16,6 +16,7 @@
 <br>
 
 <!--Header-->
+<!--Header-->
 <section>
     <div class="container ">
         <div class="row">
@@ -23,25 +24,31 @@
                 role="tablist"
                 style="--bs-nav-link-color: var(--bs-white); --bs-nav-pills-link-active-color: var(--bs-dark); --bs-nav-pills-link-active-bg: var(--bs-white);">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link rounded-5" id="contact-tab2" data-bs-toggle="tab" type="button" role="tab"
-                            aria-selected="false" disabled><span class="h4 text-white fw-bolder text-uppercase font-monospace">Concordance</span>
-                    </button>
+                    <a href="{% url 'index' %}" style="text-decoration: none">
+                        <button class="nav-link rounded-5" id="contact-tab2" data-bs-toggle="tab" type="button"
+                                role="tab"
+                                aria-selected="false" disabled><span
+                                class="h4 text-white fw-bolder text-uppercase font-monospace">MConcordance</span>
+                        </button>
+                    </a>
+
                 </li>
                 <li class="nav-item" role="presentation">
-                <a href="{% url 'index' %}" class="nav-link active rounded-5">
-                    Word search
-                </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a href="{% url 'attachFile' %}" class="nav-link  rounded-5">
-                    Attach file
-                </a>
-            </li>
+                    <a href="{% url 'index' %}" class="nav-link active rounded-5">
+                        <span class="fs-5 fw-bold">Word search</span>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a href="{% url 'attachFile' %}" class="nav-link   rounded-5">
+                        <span class="fs-5 fw-bold">Attach file</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
     <br>
 </section>
+
 
 
 <!--Main-->
@@ -68,7 +75,7 @@
                             {% for category in categories %}
                             <li class="list-group-item">
                                 <input class="form-check-input me-1" type="radio" name="category"
-                                    value="{{ category }}">
+                                    value="{{ category }}" {% if category == selected_category %}checked{% endif %}>
                                 <label class="form-check-label">{{ category }}</label>
                             </li>
                             {% endfor %}
