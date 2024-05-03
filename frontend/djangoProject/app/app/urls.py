@@ -19,7 +19,7 @@ from django.urls import path
 from concordance.views import index, attachFile
 
 urlpatterns = [
+    path('', index, name='index'),
     path('admin/', admin.site.urls),
-    path('index/', index, name="index"),
     path('attachFile/', attachFile, name="attachFile"),
 ]
