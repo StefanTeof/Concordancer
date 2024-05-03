@@ -99,13 +99,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for word in words %}
+                    {% for sentence in context_results %}
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ word.file }}</td>
-                        <td class="text-end">{{ word.left_context }}</td>
-                        <td class="text-danger text-center fw-bold">{{ word.word }}</td>
-                        <td>{{ word.right_context }}</td>
+                        <td>{{ sentence.0 }}</td>
+                        <td class="text-end">{{sentence.1 }}</td>
+                        <td class="text-danger text-center fw-bold">{{ sentence.2 }}</td>
+                        <td>{{sentence.3 }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
