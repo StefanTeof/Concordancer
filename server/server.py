@@ -168,11 +168,8 @@ async def search(request_body: SearchRequestBody):
     cursor = connection.cursor()
 
     try:
-        # Fetch all files from the database
         cursor.execute("SELECT file_id, resource, context FROM files")
         files = cursor.fetchall()
-        # print(f'FILES: {files}')
-        # Process each file and search for the keyword
         search_results = []
         matching_sentences = []
         for file_id, file_name, file_content in files:
@@ -191,7 +188,7 @@ async def search(request_body: SearchRequestBody):
 
             # Here you decide whether to use spacy or macedonizer function for additional filtering
             # For example, using Spacy:
-            # filtered_sentences = filter_sentences_with_spacy(matching_sentences, keyword, request_body.pos_category)
+        # filtered_sentences = filter_sentences_with_spacy(matching_sentences, keyword, request_body.pos_category)
         
         # print(f'SENTENCES ONLY: {sentences_only}')      
         # print(f'MATCHING SEN: {matching_sentence.sentence for matching_sentence in matching_sentences}')
@@ -218,14 +215,26 @@ async def search(request_body: SearchRequestBody):
         connection.close()
         
         
-def filter_sentences_with_spacy(sentences, keyword, pos_category):
+def filter_sentences_with_spacy(sentences_dict, keyword, pos_category):
+    sentences = [entry["sentence"] for entry in sentences_dict]
     matching_sentences = []
+
     for sentence in sentences:
         doc = nlp(sentence)
         for token in doc:
             if token.text.lower() == keyword.lower() and pos_category.lower() in spacy.explain(token.pos_).lower():
                 matching_sentences.append(sentence)
                 break
+            
+    final_result = []
+    seen = set()  # Set to track seen (sentence, filename) pairs
+    for s in matching_sentences:
+        for s2 in sentences_dict:
+            if s == s2:
+                pair = (s, s2['file_name'])  # Create a tuple of the sentence and filename
+                if pair not in seen:  # Check if the pair has not been added yet
+                    seen.add(pair)  # Mark this pair as seen
+                    final_result.append({"sentence": s, "file_name": s2['file_name']})
     return matching_sentences
 
 
