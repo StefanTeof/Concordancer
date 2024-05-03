@@ -20,6 +20,6 @@ from concordance.views import index, attachFile
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('index/', index, name="index"),
+    path('', index, name="index"),
     path('attachFile/', attachFile, name="attachFile"),
 ]

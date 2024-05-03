@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from .models import Word
 
-
 # Create your views here.
 def index(request):
     user = request.user
