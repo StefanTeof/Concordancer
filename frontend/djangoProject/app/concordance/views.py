@@ -6,25 +6,26 @@ from .models import Word
 
 # Create your views here.
 
-def left_right_context(keyword, search_results):
-    context_results = []
+def convert_to_dict(data):
+    if not data:
+        return []
 
-    # Iterate through each entry in the search results
-    for result in search_results:
-        filename = result['file_name']
-        sentence = result['matching_sentence']
+    if isinstance(data[0], list):
+        result = [
+            {
+                'file_name': item[0],
+                'left_context': item[1].strip(),
+                'keyword': item[2].strip(),
+                'right_context': item[3].strip()
+            }
+            for item in data
+        ]
+    elif isinstance(data[0], dict):
+        result = data
+    else:
+        result = []
 
-        # Find the position of the keyword in the sentence
-        idx = sentence.lower().find(keyword.lower())
-        
-        if idx != -1:
-            left_context = sentence[:idx].strip()
-            right_context = sentence[idx + len(keyword):].strip()
-            keyword_in_context = sentence[idx:idx + len(keyword)].strip()
-
-            context_results.append((filename, left_context, keyword_in_context, right_context))
-
-    return context_results
+    return result
 
 def upload_to_fastapi(file):
     url = 'http://localhost:8000/upload_file/'  # URL of your FastAPI endpoint
@@ -41,38 +42,65 @@ def index(request):
     selected_category = request.session.get('selected_category', '')  # Initialize selected category from session
 
     # The form submission via GET request will include 'keyword' and 'category'
-    if request.method == 'GET' and 'keyword' in request.GET and 'category' in request.GET:
+    if request.method == 'GET' and 'keyword' in request.GET:
+        
+        request.session['search_results'] = []
+        request.session['context_results'] = []
+        
         keyword = request.GET['keyword']
-        category = request.GET['category']
+        
+        if 'category' in request.GET:
+            category = request.GET['category']
 
-        # Proceed with the API call only if both keyword and category are provided
-        if keyword and category:
-            payload = {
-                'keyword': keyword,
-                'pos_category': category
-            }
-            # URL of the FastAPI endpoint
-            url = 'http://localhost:8000/search/'  # Change to your actual FastAPI server URL
+            if keyword and category:
+                search_payload = {
+                    'keyword': keyword,
+                    'pos_category': category
+                }
+                # URL of the FastAPI endpoint
+                search_url = 'http://localhost:8000/search/'
 
-            # Making a POST request to the FastAPI backend
-            response = requests.post(url, json=payload)
-
-            # Check if the request was successful
-            if response.status_code == 200:
-                search_results = response.json()['results']
-                # Call the function to process left and right context
-                context_results = left_right_context(keyword=keyword, search_results=search_results)
-                
-                # Store results, context, and category in the session
-                request.session['search_results'] = search_results
-                request.session['context_results'] = context_results
-                request.session['selected_category'] = category  # Save the category in the session
+                try:
+                    search_response = requests.post(search_url, json=search_payload, timeout=20)
+                    
+                    if search_response.status_code == 200:
+                        search_api_results = search_response.json()['results']
+                        # print(f"SEARCH API RESULTS ======== {search_api_results}")
+                        context_results.extend(search_api_results)
+                        request.session['search_results'] = search_api_results
+                        request.session['selected_category'] = category
+                    else:
+                        print("Failed to fetch results from search API")
+                except requests.Timeout:
+                    print("The request timed out")
+                except requests.RequestException as e:
+                    print(f"An error occurred: {e}")
             else:
-                print("Failed to fetch results")
+                # If keyword or category are empty, do not call API and possibly handle user notification
+                print("Keyword and category must be provided")
         else:
-            # If keyword or category are empty, do not call API and possibly handle user notification
-            print("Keyword and category must be provided")
-
+            simple_search_payload = {
+                'keyword': keyword
+            }
+            simple_search_url = 'http://localhost:8000/simple_search/'
+            try:
+                simple_search_response = requests.post(simple_search_url, json=simple_search_payload, timeout=10)
+                
+                if simple_search_response.status_code == 200:
+                    simple_search_api_results = simple_search_response.json()
+                    context_results.extend(simple_search_api_results)
+                else:
+                    print("Failed to fetch results from simple search API")
+            except requests.Timeout:
+                print("The request timed out")
+            except requests.RequestException as e:
+                print(f"An error occurred: {e}")
+    
+    
+    context_results = convert_to_dict(context_results)
+    print(f"SEARCH API RESULTS ======== {context_results}")
+                        
+    
     context = {
         'categories': categories_list,
         'search_results': search_results,
