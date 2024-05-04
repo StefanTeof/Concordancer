@@ -24,14 +24,12 @@ tokenizer = RobertaTokenizer.from_pretrained('macedonizer/mk-roberta-base')
 model = RobertaModel.from_pretrained('macedonizer/mk-roberta-base')
 svm_model = joblib.load('../Models/svm_model.pkl')
 
-# class RequestBody(BaseModel):
-#     sentences: List[str]
-#     keyword: str
-#     pos_category: str
-    
 class SearchRequestBody(BaseModel):
     keyword: str
     pos_category: str
+
+class SimpleSearchRequestBody(BaseModel):
+    keyword: str
 
 app = FastAPI()
 
@@ -160,10 +158,77 @@ async def upload_file(file: UploadFile = File(...)):
 
     return {"file_id": file_id, "file_name": file.filename}
 
+@app.post("/simple_search/")
+async def simple_search(request_body: SimpleSearchRequestBody):
+    keyword = request_body.keyword.lower()
+
+    if not keyword:
+        raise HTTPException(status_code=400, detail="Keyword must be provided.")  
+    
+    lemmas = pd.read_csv('../lemmas.csv')
+    
+    related_words = set()
+    related_words.add(keyword)
+    if keyword in lemmas['word'].values:
+        lemma = lemmas[lemmas['word'] == keyword]['lemma'].iloc[0]
+        related_words.update(set(lemmas[lemmas['lemma'] == lemma]['word'].tolist()))
+        related_words.add(lemma)
+        
+    connection = connect_to_database()
+    cursor = connection.cursor()
+    
+    try:
+        cursor.execute("SELECT file_id, resource, context FROM files")
+        files = cursor.fetchall()
+        search_results = []
+        for file_id, file_name, file_content in files:
+            content_lower = file_content.lower()
+            for word in related_words:
+                start = 0
+                while True:
+                    start = content_lower.find(word, start)
+                    if start == -1:
+                        break
+                    end = start + len(word)
+                    
+                    # Define the context window size
+                    window_size = 100
+                    left_context = file_content[max(0, start - window_size):start]
+                    right_context = file_content[end:min(len(file_content), end + window_size)]
+
+                    search_results.append((file_name, left_context, word, right_context))
+                    start = end  # Move start index past the keyword for next search
+
+        return search_results
+
+    except Error as e:
+        print("Error while fetching files from MySQL", e)
+        raise HTTPException(status_code=500, detail="Search failed")
+
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
 
 
 @app.post("/search/")
 async def search(request_body: SearchRequestBody):
+    keyword = request_body.keyword.lower()
+    category = request_body.pos_category.lower()
+
+    if not keyword or not category:
+        raise HTTPException(status_code=400, detail="Both keyword and category must be provided.")
+
+    lemmas = pd.read_csv('../lemmas.csv')
+    
+    related_words = set()
+    related_words.add(keyword)
+    if keyword in lemmas['word'].values:
+        lemma = lemmas[lemmas['word'] == keyword]['lemma'].iloc[0]
+        related_words.update(set(lemmas[lemmas['lemma'] == lemma]['word'].tolist()))
+        related_words.add(lemma)
+    
+
     connection = connect_to_database()
     cursor = connection.cursor()
 
@@ -171,39 +236,13 @@ async def search(request_body: SearchRequestBody):
         cursor.execute("SELECT file_id, resource, context FROM files")
         files = cursor.fetchall()
         search_results = []
-        matching_sentences = []
-        for file_id, file_name, file_content in files:
-            # Process the file
-            processed_data = process_file(file_content, file_name)
-            print(f'Processed Data: {processed_data}')
-            # Search for the keyword in the processed data
-            keyword = request_body.keyword.lower()
-            # for data in processed_data:
-            #     print(data)
-            matching_sentences += [
-                {"file_name": file_name, "sentence": data["sentence"]}
-                for data in processed_data
-                if keyword in data["sentence"].lower()
-            ]
-
-            # Here you decide whether to use spacy or macedonizer function for additional filtering
-            # For example, using Spacy:
-        # filtered_sentences = filter_sentences_with_spacy(matching_sentences, keyword, request_body.pos_category)
         
-        # print(f'SENTENCES ONLY: {sentences_only}')      
-        # print(f'MATCHING SEN: {matching_sentence.sentence for matching_sentence in matching_sentences}')
-        # For Macedonizer, you would use:
-        filtered_sentences = filter_sentences_with_macedonizer(matching_sentences, keyword, request_body.pos_category)
-        print(filtered_sentences)
-        # Append the results to the search results with filename and sentence_id
-        search_results.extend([
-            {
-                "file_name": fs['file_name'],
-                "matching_sentence": fs['sentence']
-            }
-            for fs in filtered_sentences
-        ])
+        for file_id, file_name, file_content in files:
+            for word in related_words:
+                spacy_results = filter_sentences_with_spacy(file_name, file_content, word, category)
+                search_results.extend(spacy_results)
 
+        print(f"RESULTS ================ {search_results}")
         return JSONResponse(content={"results": search_results})
 
     except Error as e:
@@ -215,27 +254,47 @@ async def search(request_body: SearchRequestBody):
         connection.close()
         
         
-def filter_sentences_with_spacy(sentences_dict, keyword, pos_category):
-    sentences = [entry["sentence"] for entry in sentences_dict]
-    matching_sentences = []
+def filter_sentences_with_spacy(file_name, text, keyword, pos_category):
+    results = []
+    doc = nlp(text)  # Process the whole text
 
-    for sentence in sentences:
-        doc = nlp(sentence)
-        for token in doc:
-            if token.text.lower() == keyword.lower() and pos_category.lower() in spacy.explain(token.pos_).lower():
-                matching_sentences.append(sentence)
-                break
+    for token in doc:  # Iterate over tokens in the document
+        if token.text.lower() == keyword.lower() and pos_category.lower() in spacy.explain(token.pos_).lower():
+            start_index = token.idx
+            end_index = start_index + len(token.text)
+
+            # Extracting context more dynamically
+            left_context = text[max(0, start_index - 50):start_index].rsplit(' ', 1)[0]
+            right_context = text[end_index:min(len(text), end_index + 50)].split(' ', 1)[-1]
+
+            results.append({
+                "file_name": file_name,
+                "left_context": left_context,
+                "keyword": token.text,
+                "right_context": right_context
+            })
+
+    return results
+    # sentences = [entry["sentence"] for entry in sentences_dict]
+    # matching_sentences = []
+
+    # for sentence in sentences:
+    #     doc = nlp(sentence)
+    #     for token in doc:
+    #         if token.text.lower() == keyword.lower() and pos_category.lower() in spacy.explain(token.pos_).lower():
+    #             matching_sentences.append(sentence)
+    #             break
             
-    final_result = []
-    seen = set()  # Set to track seen (sentence, filename) pairs
-    for s in matching_sentences:
-        for s2 in sentences_dict:
-            if s == s2:
-                pair = (s, s2['file_name'])  # Create a tuple of the sentence and filename
-                if pair not in seen:  # Check if the pair has not been added yet
-                    seen.add(pair)  # Mark this pair as seen
-                    final_result.append({"sentence": s, "file_name": s2['file_name']})
-    return matching_sentences
+    # final_result = []
+    # seen = set()  # Set to track seen (sentence, filename) pairs
+    # for s in matching_sentences:
+    #     for s2 in sentences_dict:
+    #         if s == s2:
+    #             pair = (s, s2['file_name'])  # Create a tuple of the sentence and filename
+    #             if pair not in seen:  # Check if the pair has not been added yet
+    #                 seen.add(pair)  # Mark this pair as seen
+    #                 final_result.append({"sentence": s, "file_name": s2['file_name']})
+    # return matching_sentences
 
 
 def filter_sentences_with_macedonizer(sentences_dict, keyword, pos_category):

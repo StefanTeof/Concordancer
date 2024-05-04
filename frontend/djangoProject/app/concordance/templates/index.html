@@ -54,13 +54,42 @@
 <!--Main-->
 <section>
     <div class="container shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+        <h5>Type word here for simple search:</h5>
+        <!-- Simple Search Form -->
+        <form method="get" action="{% url 'index' %}">
+            <div class="input-group mb-3">
+                <input class="form-control border border-3" type="search" placeholder="Example..." aria-label="Search" name="keyword">
+                <button class="btn btn-outline-primary" type="submit">Simple Search</button>
+            </div>
+        </form>
+
+        <h5>Type word and select category for advanced search:</h5>
+        <!-- Advanced Search Form -->
+        <form method="get" action="{% url 'index' %}">
+            <div class="input-group mb-3">
+                <input class="form-control border border-3" type="search" placeholder="Example..." aria-label="Search" name="keyword">
+                <button class="btn btn-outline-primary" type="submit">Advanced Search</button>
+            </div>
+            <ul class="list-group">
+                {% for category in categories %}
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="radio" name="category"
+                        value="{{ category }}" {% if category == selected_category %}checked{% endif %}>
+                    <label class="form-check-label">{{ category }}</label>
+                </li>
+                {% endfor %}
+            </ul>
+        </form>
+    </div>
+</section>
+
+<!-- <section>
+    <div class="container shadow-lg p-3 mb-5 bg-body-tertiary rounded">
         <div class="container" id="wsearchTab">
             <div class="row bg-body-tertiary">
                 <h5>Type word here:</h5>
             </div>
-            <!-- Form should start from here -->
             <form method="get" action="{% url 'index' %}">
-                <!-- Ensure the action matches the Django URL name for the view -->
                 <div class="row">
                     <div class="col">
                         <nav class="navbar bg-body-tertiary">
@@ -88,7 +117,7 @@
             </form>
         </div>
     </div>
-</section>
+</section> -->
 
 
     <!--Result section-->
@@ -109,10 +138,10 @@
                     {% for sentence in context_results %}
                     <tr>
                         <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ sentence.0 }}</td>
-                        <td class="text-end">{{sentence.1 }}</td>
-                        <td class="text-danger text-center fw-bold">{{ sentence.2 }}</td>
-                        <td>{{sentence.3 }}</td>
+                        <td>{{ sentence.file_name }}</td>
+                        <td class="text-end">{{sentence.left_context }}</td>
+                        <td class="text-danger text-center fw-bold">{{ sentence.keyword }}</td>
+                        <td>{{sentence.right_context }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
