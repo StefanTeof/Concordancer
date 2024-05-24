@@ -65,9 +65,22 @@ def index(request):
                     
                     if search_response.status_code == 200:
                         search_api_results = search_response.json()['results']
+                        
+                        unique_results = list({(result['file_name'], result['left_context'], result['keyword'], result['right_context']) for result in search_api_results})
+
+                        unique_results_dicts = [
+                            {
+                                "file_name": file_name,
+                                "left_context": left_context,
+                                "keyword": keyword,
+                                "right_context": right_context
+                            }
+                            for (file_name, left_context, keyword, right_context) in unique_results
+                        ]
+
                         # print(f"SEARCH API RESULTS ======== {search_api_results}")
-                        context_results.extend(search_api_results)
-                        request.session['search_results'] = search_api_results
+                        context_results.extend(unique_results_dicts)
+                        request.session['search_results'] = unique_results_dicts
                         request.session['selected_category'] = category
                     else:
                         print("Failed to fetch results from search API")

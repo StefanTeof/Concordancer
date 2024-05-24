@@ -16,7 +16,6 @@
 <br>
 
 <!--Header-->
-<!--Header-->
 <section>
     <div class="container ">
         <div class="row">
@@ -31,7 +30,6 @@
                                 class="h4 text-white fw-bolder text-uppercase font-monospace">MConcordance</span>
                         </button>
                     </a>
-
                 </li>
                 <li class="nav-item" role="presentation">
                     <a href="{% url 'index' %}" class="nav-link active rounded-5">
@@ -49,107 +47,95 @@
     <br>
 </section>
 
-
-
 <!--Main-->
 <section>
     <div class="container shadow-lg p-3 mb-5 bg-body-tertiary rounded">
-        <h5>Type word here for simple search:</h5>
-        <!-- Simple Search Form -->
-        <form method="get" action="{% url 'index' %}">
-            <div class="input-group mb-3">
-                <input class="form-control border border-3" type="search" placeholder="Example..." aria-label="Search" name="keyword">
-                <button class="btn btn-outline-primary" type="submit">Simple Search</button>
+        <ul class="nav nav-tabs" id="searchTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="simple-search-tab" data-bs-toggle="tab" data-bs-target="#simple-search" type="button" role="tab" aria-controls="simple-search" aria-selected="true">Simple Search</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="advanced-search-tab" data-bs-toggle="tab" data-bs-target="#advanced-search" type="button" role="tab" aria-controls="advanced-search" aria-selected="false">Advanced Search</button>
+            </li>
+        </ul>
+        <br />
+        <div class="tab-content" id="searchTabsContent">
+            <!-- Simple Search Form -->
+            <div class="tab-pane fade show active" id="simple-search" role="tabpanel" aria-labelledby="simple-search-tab">
+                <h5>Type word here for simple search:</h5>
+                <form method="get" action="{% url 'index' %}">
+                    <input type="hidden" name="tab" value="simple">
+                    <div class="input-group mb-3">
+                        <input class="form-control border border-3" type="search" placeholder="Example..." aria-label="Search" name="keyword">
+                        <button class="btn btn-outline-primary" type="submit">Simple Search</button>
+                    </div>
+                </form>
             </div>
-        </form>
-
-        <h5>Type word and select category for advanced search:</h5>
-        <!-- Advanced Search Form -->
-        <form method="get" action="{% url 'index' %}">
-            <div class="input-group mb-3">
-                <input class="form-control border border-3" type="search" placeholder="Example..." aria-label="Search" name="keyword">
-                <button class="btn btn-outline-primary" type="submit">Advanced Search</button>
+            <!-- Advanced Search Form -->
+            <div class="tab-pane fade" id="advanced-search" role="tabpanel" aria-labelledby="advanced-search-tab">
+                <h5>Type word and select category for advanced search:</h5>
+                <form method="get" action="{% url 'index' %}">
+                    <input type="hidden" name="tab" value="advanced">
+                    <div class="input-group mb-3">
+                        <input class="form-control border border-3" type="search" placeholder="Example..." aria-label="Search" name="keyword">
+                        <button class="btn btn-outline-primary" type="submit">Advanced Search</button>
+                    </div>
+                    <ul class="list-group">
+                        {% for category in categories %}
+                        <li class="list-group-item">
+                            <input class="form-check-input me-1" type="radio" name="category"
+                                value="{{ category }}" {% if category == selected_category %}checked{% endif %}>
+                            <label class="form-check-label">{{ category }}</label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </form>
             </div>
-            <ul class="list-group">
-                {% for category in categories %}
-                <li class="list-group-item">
-                    <input class="form-check-input me-1" type="radio" name="category"
-                        value="{{ category }}" {% if category == selected_category %}checked{% endif %}>
-                    <label class="form-check-label">{{ category }}</label>
-                </li>
-                {% endfor %}
-            </ul>
-        </form>
+        </div>
     </div>
 </section>
 
-<!-- <section>
+<!--Result section-->
+<section>
     <div class="container shadow-lg p-3 mb-5 bg-body-tertiary rounded">
-        <div class="container" id="wsearchTab">
-            <div class="row bg-body-tertiary">
-                <h5>Type word here:</h5>
-            </div>
-            <form method="get" action="{% url 'index' %}">
-                <div class="row">
-                    <div class="col">
-                        <nav class="navbar bg-body-tertiary">
-                            <div class="container-fluid">
-                                <input class="form-control border border-3" type="search" placeholder="Example..."
-                                    aria-label="Search" name="keyword">
-                            </div>
-                        </nav>
-                    </div>
-                    <div class="col">
-                        <ul class="list-group">
-                            {% for category in categories %}
-                            <li class="list-group-item">
-                                <input class="form-check-input me-1" type="radio" name="category"
-                                    value="{{ category }}" {% if category == selected_category %}checked{% endif %}>
-                                <label class="form-check-label">{{ category }}</label>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <div class="col">
-                        <button class="btn btn-outline-primary" type="submit">Search</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+        <table class="table" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 5%;">#</th>
+                    <th scope="col" style="width: 10%;">Resource</th>
+                    <th scope="col" class="text-end" style="width: 37.5%;">Left context</th>
+                    <th scope="col" class="text-center" style="width: 10%;">KWIC</th>
+                    <th scope="col" style="width: 37.5%;">Right context</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sentence in context_results %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ sentence.file_name }}</td>
+                    <td class="text-end">{{sentence.left_context }}</td>
+                    <td class="text-danger text-center fw-bold">{{ sentence.keyword }}</td>
+                    <td>{{sentence.right_context }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-</section> -->
+</section>
 
-
-    <!--Result section-->
-
-    <section>
-        <div class="container shadow-lg p-3 mb-5 bg-body-tertiary rounded">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Resource</th>
-                        <th scope="col" class="text-end">Left context</th>
-                        <th scope="col" class="text-center">KWIC</th>
-                        <th scope="col">Right context</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for sentence in context_results %}
-                    <tr>
-                        <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ sentence.file_name }}</td>
-                        <td class="text-end">{{sentence.left_context }}</td>
-                        <td class="text-danger text-center fw-bold">{{ sentence.keyword }}</td>
-                        <td>{{sentence.right_context }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!--Footer-->
+<!-- JavaScript to handle tab switching -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab) {
+            const triggerTab = document.querySelector(`button[data-bs-target="#${tab}-search"]`);
+            if (triggerTab) {
+                triggerTab.click();
+            }
+        }
+    });
+</script>
 
 </body>
 
