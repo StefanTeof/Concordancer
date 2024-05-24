@@ -184,20 +184,17 @@ async def simple_search(request_body: SimpleSearchRequestBody):
         for file_id, file_name, file_content in files:
             content_lower = file_content.lower()
             for word in related_words:
-                start = 0
-                while True:
-                    start = content_lower.find(word, start)
-                    if start == -1:
-                        break
-                    end = start + len(word)
+                pattern = r'\b' + re.escape(word) + r'\b'
+                for match in re.finditer(pattern, content_lower):
+                    start = match.start()
+                    end = match.end()
                     
                     # Define the context window size
-                    window_size = 100
+                    window_size = 60
                     left_context = file_content[max(0, start - window_size):start]
                     right_context = file_content[end:min(len(file_content), end + window_size)]
 
                     search_results.append((file_name, left_context, word, right_context))
-                    start = end  # Move start index past the keyword for next search
 
         return search_results
 
@@ -242,7 +239,7 @@ async def search(request_body: SearchRequestBody):
                 spacy_results = filter_sentences_with_spacy(file_name, file_content, word, category)
                 search_results.extend(spacy_results)
 
-        print(f"RESULTS ================ {search_results}")
+        # print(f"RESULTS ================ {search_results}")
         return JSONResponse(content={"results": search_results})
 
     except Error as e:
@@ -264,8 +261,8 @@ def filter_sentences_with_spacy(file_name, text, keyword, pos_category):
             end_index = start_index + len(token.text)
 
             # Extracting context more dynamically
-            left_context = text[max(0, start_index - 50):start_index].rsplit(' ', 1)[0]
-            right_context = text[end_index:min(len(text), end_index + 50)].split(' ', 1)[-1]
+            left_context = text[max(0, start_index - 60):start_index].rsplit(' ', 1)[0]
+            right_context = text[end_index:min(len(text), end_index + 60)].split(' ', 1)[-1]
 
             results.append({
                 "file_name": file_name,
@@ -275,26 +272,6 @@ def filter_sentences_with_spacy(file_name, text, keyword, pos_category):
             })
 
     return results
-    # sentences = [entry["sentence"] for entry in sentences_dict]
-    # matching_sentences = []
-
-    # for sentence in sentences:
-    #     doc = nlp(sentence)
-    #     for token in doc:
-    #         if token.text.lower() == keyword.lower() and pos_category.lower() in spacy.explain(token.pos_).lower():
-    #             matching_sentences.append(sentence)
-    #             break
-            
-    # final_result = []
-    # seen = set()  # Set to track seen (sentence, filename) pairs
-    # for s in matching_sentences:
-    #     for s2 in sentences_dict:
-    #         if s == s2:
-    #             pair = (s, s2['file_name'])  # Create a tuple of the sentence and filename
-    #             if pair not in seen:  # Check if the pair has not been added yet
-    #                 seen.add(pair)  # Mark this pair as seen
-    #                 final_result.append({"sentence": s, "file_name": s2['file_name']})
-    # return matching_sentences
 
 
 def filter_sentences_with_macedonizer(sentences_dict, keyword, pos_category):
